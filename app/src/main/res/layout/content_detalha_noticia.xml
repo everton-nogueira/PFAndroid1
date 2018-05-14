@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:scrollbars="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="mobile.iesb.br.projetofinal.activitys.DetalhaNoticiaActivity"
     tools:showIn="@layout/activity_detalha_noticia">
@@ -11,29 +12,35 @@
 
     <ImageView
         android:id="@+id/imageViewNoticia"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="100dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginRight="100dp"
+        android:layout_marginStart="100dp"
         android:layout_marginTop="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/tituloNoticia"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_chainStyle="spread"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tituloNoticia"
         android:layout_width="0dp"
         android:layout_height="45dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/corpoNoticia"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_chainStyle="spread"
         app:layout_constraintTop_toBottomOf="@+id/imageViewNoticia" />
 
     <TextView
@@ -51,6 +58,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_chainStyle="spread"
         app:layout_constraintTop_toBottomOf="@+id/tituloNoticia" />
 
     <TextView
@@ -68,6 +76,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="spread"
         app:layout_constraintVertical_bias="0.809" />
 
     <Button
@@ -80,8 +89,10 @@
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:text="VOLTAR"
+        app:layout_constraintVertical_chainStyle="spread"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/corpoNoticia" />
 
 </android.support.constraint.ConstraintLayout>

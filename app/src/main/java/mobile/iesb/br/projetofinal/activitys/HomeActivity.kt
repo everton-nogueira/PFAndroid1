@@ -59,6 +59,11 @@ class HomeActivity : AppCompatActivity() {
                 startActivity(myIntent)
                 true
             }
+            R.id.sair -> {
+                val myIntent = Intent(this, MainActivity::class.java)
+                startActivity(myIntent)
+                true
+            }
             else -> {
                 super.onOptionsItemSelected(item)
             }

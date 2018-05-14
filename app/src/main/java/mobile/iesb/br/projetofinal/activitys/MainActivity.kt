@@ -49,6 +49,7 @@ class MainActivity : AppCompatActivity() {
                 var editor = sessao.edit()
                 editor.putString("emailLogin", email.text.toString())
                 editor.commit()
+                finish()
                 val myIntent = Intent(this, HomeActivity::class.java)
                 startActivity(myIntent)
             }
