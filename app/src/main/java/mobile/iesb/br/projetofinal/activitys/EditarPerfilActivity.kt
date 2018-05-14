@@ -58,7 +58,7 @@ class EditarPerfilActivity : AppCompatActivity() {
         var usuario = db?.usuarioDao()?.findByEmail(email)
 
         imageView.setImageBitmap(usuario?.retornaBitMapImage())
-        textViewEmailUsuario.text = usuario?.email;
+        textViewEmailUsuario.text = usuario?.email
         editTextNomeUsuario.setText(usuario?.nome)
         editTextMatricula.setText(usuario?.matricula.toString())
         editTextTelefone.setText(usuario?.telefone.toString())
@@ -83,7 +83,7 @@ class EditarPerfilActivity : AppCompatActivity() {
         pictureDialog.show()
     }
 
-    fun choosePhotoFromGallary() {
+    private fun choosePhotoFromGallary() {
         val permission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
         if (permission != PackageManager.PERMISSION_GRANTED) {
             makeRequest(Manifest.permission.READ_EXTERNAL_STORAGE, GALLERY_REQUEST_CODE)
@@ -155,9 +155,9 @@ class EditarPerfilActivity : AppCompatActivity() {
         usuario?.telefone = editTextTelefone.text.toString().toLong()
         db?.usuarioDao()?.alteraUsuario(usuario)
 
-        Toast.makeText(this, "Usuário alterado com Sucesso", Toast.LENGTH_SHORT).show()
+        Toast.makeText(applicationContext, "Usuário alterado com Sucesso", Toast.LENGTH_SHORT).show()
 
-        //this.finish()
+        this.finish()
     }
 
 
@@ -174,33 +174,9 @@ class EditarPerfilActivity : AppCompatActivity() {
                     Toast.makeText(this, "Erro ao recuperar imagem!", Toast.LENGTH_SHORT).show()
                 }
             }
-        } else if (requestCode == CAMERA) {
+        } else if (requestCode == CAMERA_REQUEST_CODE) {
             imageView!!.setImageBitmap(data!!.extras!!.get("data") as Bitmap)
         }
-    }
-
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//
-//        when (requestCode) {
-//            CAMERA_REQUEST_CODE -> {
-//                if (resultCode == Activity.RESULT_OK && data != null) {
-//                    imageView.setImageBitmap(data.extras.get("data") as Bitmap)
-//                }
-//            }
-//            GALLERY_REQUEST_CODE -> {
-//                if (resultCode == Activity.RESULT_OK && data != null) {
-//                    imageView.setImageBitmap(data.extras.get("data") as Bitmap)
-//                }
-//            }
-//            else -> {
-//                Toast.makeText(this, "Comando não conhecido", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//    }
-
-    fun abrirCamera(abreCamera:Intent){
-        startActivityForResult(abreCamera, CAMERA_REQUEST_CODE)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
