@@ -3,11 +3,11 @@ package mobile.iesb.br.projetofinal.activitys
 import android.arch.persistence.room.Room
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.support.annotation.RequiresApi
+import android.support.v4.view.PagerAdapter
+import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.view.*
 import android.widget.*
@@ -15,7 +15,6 @@ import mobile.iesb.br.projetofinal.R
 import mobile.iesb.br.projetofinal.dao.AppDatabase
 import mobile.iesb.br.projetofinal.entidade.Noticia
 import mobile.iesb.br.projetofinal.util.ResourcesUtil
-import java.io.ByteArrayOutputStream
 import java.util.*
 
 class HomeActivity : AppCompatActivity() {
@@ -43,6 +42,9 @@ class HomeActivity : AppCompatActivity() {
             myIntent.putExtra("itemSelecionado", adapterView.getItemAtPosition(position) as Noticia)
             startActivity(myIntent)
         }
+
+        var resources = intArrayOf(R.drawable.noticia, R.drawable.noticia2, R.drawable.noticia3)
+        findViewById<ViewPager>(R.id.carrosselView).adapter = CustomPagerAdapter(this, resources)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -115,4 +117,43 @@ private class NoticiaListAdapter(paramContexto: Context, paramNoticias: List<Not
 
         return noticiaRow
     }
+}
+
+class CustomPagerAdapter(val context: Context, resources: IntArray) : PagerAdapter() {
+
+    private var mContext: Context
+    private var mLayoutInflater: LayoutInflater
+    private var mResources: IntArray
+
+    init {
+        mContext = context
+        mResources = resources
+        mLayoutInflater = mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    }
+
+    override fun isViewFromObject(view: View?, `object`: Any?): Boolean {
+        return view == `object` as LinearLayout
+    }
+
+    override fun getCount(): Int {
+        return mResources.size
+    }
+
+
+    override fun instantiateItem(container: ViewGroup?, position: Int): Any {
+        var itemView: View = mLayoutInflater.inflate(R.layout.content_page_item, container, false)
+
+        var imageView: ImageView = itemView.findViewById(R.id.imageViewPageItem) as ImageView
+        imageView.setImageResource(mResources[position])
+
+        container?.addView(itemView)
+
+        return itemView
+    }
+
+    override fun destroyItem(container: ViewGroup?, position: Int, `object`: Any?) {
+        container?.removeView(`object` as LinearLayout)
+
+    }
+
 }
