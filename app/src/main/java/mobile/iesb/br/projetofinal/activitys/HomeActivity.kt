@@ -42,9 +42,6 @@ class HomeActivity : AppCompatActivity() {
             myIntent.putExtra("itemSelecionado", adapterView.getItemAtPosition(position) as Noticia)
             startActivity(myIntent)
         }
-
-        var resources = intArrayOf(R.drawable.noticia, R.drawable.noticia2, R.drawable.noticia3)
-        findViewById<ViewPager>(R.id.carrosselView).adapter = CustomPagerAdapter(this, resources)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -122,43 +119,4 @@ private class NoticiaListAdapter(paramContexto: Context, paramNoticias: List<Not
 
         return noticiaRow
     }
-}
-
-class CustomPagerAdapter(val context: Context, resources: IntArray) : PagerAdapter() {
-
-    private var mContext: Context
-    private var mLayoutInflater: LayoutInflater
-    private var mResources: IntArray
-
-    init {
-        mContext = context
-        mResources = resources
-        mLayoutInflater = mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-    }
-
-    override fun isViewFromObject(view: View?, `object`: Any?): Boolean {
-        return view == `object` as LinearLayout
-    }
-
-    override fun getCount(): Int {
-        return mResources.size
-    }
-
-
-    override fun instantiateItem(container: ViewGroup?, position: Int): Any {
-        var itemView: View = mLayoutInflater.inflate(R.layout.content_page_item, container, false)
-
-        var imageView: ImageView = itemView.findViewById(R.id.imageViewPageItem) as ImageView
-        imageView.setImageResource(mResources[position])
-
-        container?.addView(itemView)
-
-        return itemView
-    }
-
-    override fun destroyItem(container: ViewGroup?, position: Int, `object`: Any?) {
-        container?.removeView(`object` as LinearLayout)
-
-    }
-
 }

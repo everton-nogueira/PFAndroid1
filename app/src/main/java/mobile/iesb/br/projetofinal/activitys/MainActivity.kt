@@ -16,6 +16,8 @@ import mobile.iesb.br.projetofinal.entidade.Usuario
 import mobile.iesb.br.projetofinal.util.ValidaUtil
 import android.graphics.BitmapFactory
 import android.graphics.Bitmap
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.content_main.*
 import mobile.iesb.br.projetofinal.util.ResourcesUtil
 import java.io.ByteArrayOutputStream
@@ -23,6 +25,7 @@ import java.io.ByteArrayOutputStream
 
 class MainActivity : AppCompatActivity() {
 
+    var mAuth: FirebaseAuth? = null
     var db: AppDatabase? = null
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -45,31 +48,30 @@ class MainActivity : AppCompatActivity() {
         buttonEntrar.setOnClickListener {
             var email = findViewById<EditText>(R.id.editTextEmailLogin)
             var senha = findViewById<EditText>(R.id.editTextSenhaLogin)
-            if (validaInputs(email, senha) && isUsuarioValido(email, senha)) {
-                var editor = sessao.edit()
-                editor.putString("emailLogin", email.text.toString())
-                editor.commit()
-                finish()
-                val myIntent = Intent(this, HomeActivity::class.java)
-                startActivity(myIntent)
+
+            mAuth = FirebaseAuth.getInstance()
+            if(validaInputs(email, senha)){
+                mAuth?.signInWithEmailAndPassword(email.text.toString(), senha.text.toString())?.addOnCompleteListener(this, {task ->
+                    if(!task.isSuccessful){
+                        Toast.makeText(applicationContext, "Dados Incorretos", Toast.LENGTH_LONG).show()
+                    }else{
+                        var user: FirebaseUser = task.result.user
+
+                        if(user != null) {
+                            var editor = sessao.edit();
+                            editor.putString("emailLogin", email.text.toString())
+                            editor.commit()
+                            val myIntent = Intent(this, HomeActivity::class.java)
+                            startActivity(myIntent)
+                        }
+                    }
+                })
+            }else{
+                Toast.makeText(applicationContext, "Dados Incorretos", Toast.LENGTH_LONG).show()
             }
         }
 
-        db = Room.databaseBuilder(
-                applicationContext,
-                AppDatabase::class.java, "room-database"
-        ).allowMainThreadQueries().build()
-
         cadastraUsuario()
-    }
-
-    private fun isUsuarioValido(email: EditText, senha: EditText): Boolean {
-        var usuario = db?.usuarioDao()?.findByEmailSenha(email.text.toString(), senha.text.toString())
-        if (usuario == null) {
-            Toast.makeText(applicationContext, "Dados Incorretos", Toast.LENGTH_LONG).show()
-            return false
-        }
-        return true
     }
 
     private fun validaInputs(email: EditText, senha: EditText): Boolean {
@@ -80,11 +82,21 @@ class MainActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun cadastraUsuario() {
+        db = Room.databaseBuilder(
+                applicationContext,
+                AppDatabase::class.java, "room-database"
+        ).allowMainThreadQueries().build()
         var email = "admin@admin.com"
         var senha = "admin"
         var usuarioAdmin = db?.usuarioDao()?.findByEmail(email)
         if (usuarioAdmin == null) {
-            db?.usuarioDao()?.insertUsuario(Usuario(0, "admin", email, ResourcesUtil.getImagem(resources, R.drawable.avatar), senha, 0, 6199999999))
+            mAuth?.createUserWithEmailAndPassword(email, senha)?.addOnCompleteListener(this, { task ->
+                if (!task.isSuccessful) {
+                    Toast.makeText(applicationContext, "Ocorreu um erro ao salvar o usuario", Toast.LENGTH_LONG).show()
+                }else{
+                    db?.usuarioDao()?.insertUsuario(Usuario(0, "admin", email, ResourcesUtil.getImagem(resources, R.drawable.avatar), senha, 0, 6199999999))
+                }
+            })
         }
     }
 

@@ -60,8 +60,8 @@ class EditarPerfilActivity : AppCompatActivity() {
         imageView.setImageBitmap(usuario?.retornaBitMapImage())
         textViewEmailUsuario.text = usuario?.email
         editTextNomeUsuario.setText(usuario?.nome)
-        editTextMatricula.setText(usuario?.matricula.toString())
-        editTextTelefone.setText(usuario?.telefone.toString())
+        editTextMatricula.setText(if(usuario?.matricula == 0L) "" else usuario?.matricula.toString())
+        editTextTelefone.setText(if (usuario?.telefone == 0L) "" else usuario?.telefone.toString())
 
         buttonAlterar.setOnClickListener{
             alteraUsuario(usuario)
