@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
                         var user: FirebaseUser = task.result.user
 
                         if(user != null) {
-                            var editor = sessao.edit();
+                            var editor = sessao.edit()
                             editor.putString("emailLogin", email.text.toString())
                             editor.commit()
                             val myIntent = Intent(this, HomeActivity::class.java)

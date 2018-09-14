@@ -61,6 +61,11 @@ class HomeActivity : AppCompatActivity() {
                 startActivity(myIntent)
                 true
             }
+            R.id.chat -> {
+                val myIntent = Intent(this, ChatActivity::class.java)
+                startActivity(myIntent)
+                true
+            }
             else -> {
                 super.onOptionsItemSelected(item)
             }
