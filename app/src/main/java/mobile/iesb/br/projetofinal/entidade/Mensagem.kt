@@ -8,5 +8,6 @@ import java.util.Date
 data class Mensagem(
         var texto: String = "",
         var sender: String = "",
+        var destinatario: String = "",
         var data: Long = 0L
 )

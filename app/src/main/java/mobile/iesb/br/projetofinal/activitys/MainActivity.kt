@@ -26,7 +26,6 @@ import java.io.ByteArrayOutputStream
 class MainActivity : AppCompatActivity() {
 
     var mAuth: FirebaseAuth? = null
-    var db: AppDatabase? = null
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,8 +69,6 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext, "Dados Incorretos", Toast.LENGTH_LONG).show()
             }
         }
-
-        cadastraUsuario()
     }
 
     private fun validaInputs(email: EditText, senha: EditText): Boolean {
@@ -80,25 +77,6 @@ class MainActivity : AppCompatActivity() {
         return isEmailValido && !isSenhaVazia
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun cadastraUsuario() {
-        db = Room.databaseBuilder(
-                applicationContext,
-                AppDatabase::class.java, "room-database"
-        ).allowMainThreadQueries().build()
-        var email = "admin@admin.com"
-        var senha = "admin"
-        var usuarioAdmin = db?.usuarioDao()?.findByEmail(email)
-        if (usuarioAdmin == null) {
-            mAuth?.createUserWithEmailAndPassword(email, senha)?.addOnCompleteListener(this, { task ->
-                if (!task.isSuccessful) {
-                    Toast.makeText(applicationContext, "Ocorreu um erro ao salvar o usuario", Toast.LENGTH_LONG).show()
-                }else{
-                    db?.usuarioDao()?.insertUsuario(Usuario(0, "admin", email, ResourcesUtil.getImagem(resources, R.drawable.avatar), senha, 0, 6199999999))
-                }
-            })
-        }
-    }
 
 
 }

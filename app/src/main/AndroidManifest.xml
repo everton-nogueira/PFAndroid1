@@ -31,6 +31,7 @@
         <activity android:name=".activitys.CadastroActivity" />
         <activity android:name=".activitys.EditarPerfilActivity" />
         <activity android:name=".activitys.ChatActivity" />
+        <activity android:name=".activitys.ListagemUsuariosChatActivity" />
     </application>
 
 </manifest>

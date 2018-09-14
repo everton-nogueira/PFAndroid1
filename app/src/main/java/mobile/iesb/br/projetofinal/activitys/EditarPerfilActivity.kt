@@ -2,8 +2,6 @@ package mobile.iesb.br.projetofinal.activitys
 
 import android.Manifest
 import android.app.AlertDialog
-import android.arch.persistence.room.Room
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -15,24 +13,30 @@ import android.support.annotation.RequiresApi
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import android.text.Editable
 import android.widget.ImageView
 import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import kotlinx.android.synthetic.main.content_editar_perfil.*
 import mobile.iesb.br.projetofinal.R
-import mobile.iesb.br.projetofinal.dao.AppDatabase
-import mobile.iesb.br.projetofinal.util.ValidaUtil
-import kotlinx.android.synthetic.main.content_editar_perfil.*;
 import mobile.iesb.br.projetofinal.entidade.Usuario
+import mobile.iesb.br.projetofinal.util.ValidaUtil
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 
 class EditarPerfilActivity : AppCompatActivity() {
 
-    var db: AppDatabase? = null
     val CAMERA = 0
     val GALERIA = 1
 
     val GALLERY_REQUEST_CODE = 1
     val CAMERA_REQUEST_CODE =  2
+
+    var chaveUsuario = ""
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,23 +52,27 @@ class EditarPerfilActivity : AppCompatActivity() {
         }
 
 
-        db = Room.databaseBuilder(
-                applicationContext,
-                AppDatabase::class.java, "room-database"
-        ).allowMainThreadQueries().build()
+        var mAuth = FirebaseAuth.getInstance()
+        var usuarioRef = FirebaseDatabase.getInstance().getReference()
+        textViewEmailUsuario.text = mAuth!!.currentUser!!.email!!
 
-        var sessao = getSharedPreferences("username", Context.MODE_PRIVATE)
-        var email = sessao.getString("emailLogin", " ")
-        var usuario = db?.usuarioDao()?.findByEmail(email)
+        usuarioRef.child("usuario").addValueEventListener(object: ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot){
+                for(usuario:DataSnapshot in dataSnapshot.children) {
+                    if(usuario.key.equals(mAuth!!.currentUser!!.uid)){
+                        editTextNomeUsuario.text = Editable.Factory.getInstance().newEditable(usuario.child("nome").value.toString())
+                        editTextMatricula.text = Editable.Factory.getInstance().newEditable(usuario.child("matricula").value.toString())
+                        editTextTelefone.text = Editable.Factory.getInstance().newEditable(usuario.child("telefone").value.toString())
+                        chaveUsuario = usuario.key
+                    }
+                }
+            }
 
-        imageView.setImageBitmap(usuario?.retornaBitMapImage())
-        textViewEmailUsuario.text = usuario?.email
-        editTextNomeUsuario.setText(usuario?.nome)
-        editTextMatricula.setText(if(usuario?.matricula == 0L) "" else usuario?.matricula.toString())
-        editTextTelefone.setText(if (usuario?.telefone == 0L) "" else usuario?.telefone.toString())
+            override fun onCancelled(error: DatabaseError) {}
+        })
 
         buttonAlterar.setOnClickListener{
-            alteraUsuario(usuario)
+            alteraUsuario()
         }
 
     }
@@ -133,27 +141,37 @@ class EditarPerfilActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun alteraUsuario(usuario: Usuario?) {
-        var senhaAlterada = true
-        if(editTextSenhaCadastro.text.isEmpty() && editTextConfirmaSenhaCadastro.text.isEmpty()){
-            senhaAlterada = false
+    fun alteraUsuario() {
+        val usuario = Usuario()
+
+//        var senhaAlterada = true
+//        if(editTextSenhaCadastro.text.isEmpty() && editTextConfirmaSenhaCadastro.text.isEmpty()){
+//            senhaAlterada = false
+//        }
+//        if(senhaAlterada){
+//            if(ValidaUtil.isPasswordValido(editTextSenhaCadastro) && ValidaUtil.isPasswordValido(editTextConfirmaSenhaCadastro)) {
+//                if (!editTextSenhaCadastro.text.toString().equals(editTextConfirmaSenhaCadastro.text.toString())) {
+//                    Toast.makeText(applicationContext, "As senhas não conferem.", Toast.LENGTH_LONG).show()
+//                    return
+//                }else {
+//                    usuario?.senha = editTextSenhaCadastro.text.toString()
+//                }
+//            }
+//        }
+
+        if(editTextNomeUsuario.text.isEmpty() || editTextMatricula.text.isEmpty() || editTextTelefone.text.isEmpty()){
+            Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_LONG).show()
+            return
         }
-        if(senhaAlterada){
-            if(ValidaUtil.isPasswordValido(editTextSenhaCadastro) && ValidaUtil.isPasswordValido(editTextConfirmaSenhaCadastro)) {
-                if (!editTextSenhaCadastro.text.toString().equals(editTextConfirmaSenhaCadastro.text.toString())) {
-                    Toast.makeText(applicationContext, "As senhas não conferem.", Toast.LENGTH_LONG).show()
-                    return
-                }else {
-                    usuario?.senha = editTextSenhaCadastro.text.toString()
-                }
-            }
-        }
-        usuario?.nome = editTextNomeUsuario.text.toString()
-        usuario?.email = textViewEmailUsuario.text.toString()
-        usuario?.foto = imageToBase64(imageView)
-        usuario?.matricula = editTextMatricula.text.toString().toLong()
-        usuario?.telefone = editTextTelefone.text.toString().toLong()
-        db?.usuarioDao()?.alteraUsuario(usuario)
+
+        usuario.nome = editTextNomeUsuario.text.toString()
+        usuario.email = textViewEmailUsuario.text.toString()
+        usuario.matricula = editTextMatricula.text.toString().toLong()
+        usuario.telefone = editTextTelefone.text.toString().toLong()
+
+        val db = FirebaseDatabase.getInstance()
+        val dbRef = db.getReference("/usuario/${chaveUsuario}")
+        dbRef.setValue(usuario)
 
         Toast.makeText(applicationContext, "Usuário alterado com Sucesso", Toast.LENGTH_SHORT).show()
 

@@ -11,6 +11,7 @@ import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.view.*
 import android.widget.*
+import com.google.firebase.auth.FirebaseAuth
 import mobile.iesb.br.projetofinal.R
 import mobile.iesb.br.projetofinal.dao.AppDatabase
 import mobile.iesb.br.projetofinal.entidade.Noticia
@@ -57,12 +58,13 @@ class HomeActivity : AppCompatActivity() {
                 true
             }
             R.id.sair -> {
+                FirebaseAuth.getInstance().signOut()
                 val myIntent = Intent(this, MainActivity::class.java)
                 startActivity(myIntent)
                 true
             }
             R.id.chat -> {
-                val myIntent = Intent(this, ChatActivity::class.java)
+                val myIntent = Intent(this, ListagemUsuariosChatActivity::class.java)
                 startActivity(myIntent)
                 true
             }

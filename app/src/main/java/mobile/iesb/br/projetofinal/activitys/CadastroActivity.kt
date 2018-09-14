@@ -1,6 +1,6 @@
 package mobile.iesb.br.projetofinal.activitys
 
-import android.arch.persistence.room.Room
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.support.annotation.RequiresApi
@@ -8,16 +8,15 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.EditText
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.content_cadastro.*
 import mobile.iesb.br.projetofinal.R
-import mobile.iesb.br.projetofinal.dao.AppDatabase
 import mobile.iesb.br.projetofinal.entidade.Usuario
-import mobile.iesb.br.projetofinal.util.ResourcesUtil
 import mobile.iesb.br.projetofinal.util.ValidaUtil
+import java.util.*
 
 class CadastroActivity : AppCompatActivity() {
 
-    var db: AppDatabase? = null
     var mAuth: FirebaseAuth? = null
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -28,7 +27,8 @@ class CadastroActivity : AppCompatActivity() {
         buttonCadastrar.setOnClickListener {
             cadastraUsuario()
         }
-        db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, "room-database").allowMainThreadQueries().build()
+
+        mAuth = FirebaseAuth.getInstance()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -43,26 +43,22 @@ class CadastroActivity : AppCompatActivity() {
                 return
             }
 
-            if (this.isEmailExistente()) {
-                Toast.makeText(applicationContext, "Usuário já cadastrado.", Toast.LENGTH_LONG).show()
-            } else {
-                insereUsuario(email, senha, senhaConfirmar)
-            }
+            insereUsuario(email, senha, senhaConfirmar)
         }
-    }
-
-    private fun isEmailExistente(): Boolean {
-        return db?.usuarioDao()?.findByEmail(editTextEmailCadastro.text.toString()) != null
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun insereUsuario(email: EditText, senha: EditText, senhaConfirmar: EditText) {
-        mAuth = FirebaseAuth.getInstance()
         mAuth?.createUserWithEmailAndPassword(email.text.toString(), senha.text.toString())?.addOnCompleteListener(this, { task ->
             if (!task.isSuccessful) {
                 Toast.makeText(applicationContext, "Ocorreu um erro ao salvar o usuario", Toast.LENGTH_LONG).show()
             }else{
-                db?.usuarioDao()?.insertUsuario(Usuario(0, email.text.toString().split('@')[0], email.text.toString(), ResourcesUtil.getImagem(resources, R.drawable.avatar), senha.text.toString(), 0, 0))
+                val db = FirebaseDatabase.getInstance()
+                val uuid = mAuth?.currentUser?.uid
+                val dbRef = db.getReference("/usuario/$uuid")
+                val user = Usuario(uuid.toString(), "", email.text.toString(), "", 0, 0)
+                dbRef.setValue(user)
+
                 email.text.clear()
                 senha.text.clear()
                 senhaConfirmar.text.clear()

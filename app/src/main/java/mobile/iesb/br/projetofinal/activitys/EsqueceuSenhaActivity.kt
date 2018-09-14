@@ -6,13 +6,15 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.content_cadastro.*
 import mobile.iesb.br.projetofinal.R
 import mobile.iesb.br.projetofinal.dao.AppDatabase
 import mobile.iesb.br.projetofinal.util.ValidaUtil
 
 class EsqueceuSenhaActivity : AppCompatActivity() {
 
-    var db: AppDatabase? = null
+    var mAuth: FirebaseAuth? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,17 +36,13 @@ class EsqueceuSenhaActivity : AppCompatActivity() {
             }
         }
 
-        db = Room.databaseBuilder(
-                applicationContext,
-                AppDatabase::class.java, "room-database"
-        ).allowMainThreadQueries().build()
+        mAuth = FirebaseAuth.getInstance()
+
     }
 
     private fun isEmailExistente(): Boolean {
         var email = findViewById<EditText>(R.id.editTextEmailRecuperaSenha)
-
-        return db?.usuarioDao()?.findByEmail(email.text.toString()) != null
-
+        return mAuth?.currentUser?.email?.equals(email) != null
     }
 
 }

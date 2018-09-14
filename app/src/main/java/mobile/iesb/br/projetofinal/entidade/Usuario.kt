@@ -1,25 +1,19 @@
 package mobile.iesb.br.projetofinal.entidade
 
-import android.arch.persistence.room.ColumnInfo
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.PrimaryKey
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Build
 import android.support.annotation.RequiresApi
 import java.io.File
 import java.io.Serializable
 import java.util.*
 
-@Entity(tableName = "usuario")
 data class Usuario (
-    @PrimaryKey(autoGenerate = true) var uid: Int = 0,
-    @ColumnInfo(name = "nome") var nome: String = "",
-    @ColumnInfo(name = "email") var email: String = "",
-    @ColumnInfo(name = "foto") var foto: String = "",
-    @ColumnInfo(name = "senha") var senha: String = "",
-    @ColumnInfo(name = "matricula") var matricula: Long = 0,
-    @ColumnInfo(name = "telefone") var telefone: Long = 0) : Serializable {
+    var uid: String = "",
+    var nome: String = "",
+    var email: String = "",
+//  var foto: String = "",
+    var senha: String = "",
+    var matricula: Long = 0,
+    var telefone: Long = 0) : Serializable {
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun converteToBase64(filePath: String) : String    {
@@ -36,8 +30,8 @@ data class Usuario (
     }
 
 
-    fun retornaBitMapImage() : Bitmap {
-        var bytes = android.util.Base64.decode(foto, android.util.Base64.DEFAULT)
-        return BitmapFactory.decodeByteArray(bytes,0, bytes.size)
-    }
+//    fun retornaBitMapImage() : Bitmap {
+//        var bytes = android.util.Base64.decode(foto, android.util.Base64.DEFAULT)
+//        return BitmapFactory.decodeByteArray(bytes,0, bytes.size)
+//    }
 }

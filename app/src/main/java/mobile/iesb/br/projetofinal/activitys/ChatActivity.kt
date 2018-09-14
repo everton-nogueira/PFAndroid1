@@ -1,7 +1,6 @@
 package mobile.iesb.br.projetofinal.activitys
 
 import android.content.Context
-import android.content.ContextWrapper
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
@@ -13,24 +12,35 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import mobile.iesb.br.projetofinal.R
 import mobile.iesb.br.projetofinal.entidade.Mensagem
-import java.util.UUID
-import java.util.Date
+import mobile.iesb.br.projetofinal.entidade.Usuario
+import java.util.*
 
 class ChatActivity : AppCompatActivity() {
     var dadosFirebase = mutableListOf<Mensagem>()
     lateinit var recyclerView: RecyclerView
     lateinit var adaptador: AdaptadorMensagem
     lateinit var txtMsg: TextView
+    lateinit var usuarioChat: Usuario
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
+
+        if (savedInstanceState == null) {
+            val extras = intent.extras
+            if (extras != null) {
+                usuarioChat = extras.get("usuarioSelecionado") as Usuario
+            }
+        } else {
+            usuarioChat = savedInstanceState.getSerializable("usuarioSelecionado") as Usuario
+        }
 
         txtMsg = findViewById(R.id.txtMsg)
 
@@ -55,13 +65,14 @@ class ChatActivity : AppCompatActivity() {
         val dbRef = db.getReference("/mensagem/$uuid")
         var sessao = getSharedPreferences("username", Context.MODE_PRIVATE)
         var email = sessao.getString("emailLogin", " ")
-        val m = Mensagem(txtMsg.text.toString(),email, uuid)
+        val m = Mensagem(txtMsg.text.toString(),email, usuarioChat.email, uuid)
         dbRef.setValue(m)
         txtMsg = findViewById(R.id.txtMsg)
         txtMsg.setText("")
     }
 
     private fun recuperarMensagens() {
+        var mAuth = FirebaseAuth.getInstance()
         val db = FirebaseDatabase.getInstance()
         val dbRef = db.getReference("/mensagem")
         dbRef.orderByChild("data")
@@ -71,9 +82,12 @@ class ChatActivity : AppCompatActivity() {
                 dadosFirebase.clear()
                 snapshot.child(""). children.forEach { snap ->
                     val mensagem = snap.getValue(Mensagem::class.java)
-                    dadosFirebase.add(mensagem!!)
-                    Log.d("FIREBASE", mensagem.toString())
-                    adaptador.setData(dadosFirebase)
+                    if((mensagem?.destinatario.equals(usuarioChat.email) && mensagem?.sender.equals(mAuth.currentUser!!.email)) ||
+                       (mensagem?.destinatario.equals(mAuth.currentUser!!.email) && mensagem?.sender.equals(usuarioChat.email))){
+                        dadosFirebase.add(mensagem!!)
+                        Log.d("FIREBASE", mensagem.toString())
+                        adaptador.setData(dadosFirebase)
+                    }
                 }
             }
 

@@ -57,40 +57,40 @@
         android:ems="10"
         android:hint="Nome"
         android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/editTextSenhaCadastro"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <EditText
-        android:id="@+id/editTextSenhaCadastro"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:ems="10"
-        android:hint="Senha"
-        android:inputType="textPassword"
-        app:layout_constraintBottom_toTopOf="@+id/editTextConfirmaSenhaCadastro"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
-        app:layout_constraintStart_toStartOf="parent" />
-
-
-    <EditText
-        android:id="@+id/editTextConfirmaSenhaCadastro"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:ems="10"
-        android:hint="Confirmação da Senha"
-        android:inputType="textPassword"
         app:layout_constraintBottom_toTopOf="@+id/editTextMatricula"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <!--<EditText-->
+        <!--android:id="@+id/editTextSenhaCadastro"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginBottom="8dp"-->
+        <!--android:layout_marginEnd="8dp"-->
+        <!--android:layout_marginStart="8dp"-->
+        <!--android:ems="10"-->
+        <!--android:hint="Senha"-->
+        <!--android:inputType="textPassword"-->
+        <!--app:layout_constraintBottom_toTopOf="@+id/editTextConfirmaSenhaCadastro"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintHorizontal_bias="0.503"-->
+        <!--app:layout_constraintStart_toStartOf="parent" />-->
+
+
+    <!--<EditText-->
+        <!--android:id="@+id/editTextConfirmaSenhaCadastro"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginBottom="8dp"-->
+        <!--android:layout_marginEnd="8dp"-->
+        <!--android:layout_marginStart="8dp"-->
+        <!--android:ems="10"-->
+        <!--android:hint="Confirmação da Senha"-->
+        <!--android:inputType="textPassword"-->
+        <!--app:layout_constraintBottom_toTopOf="@+id/editTextMatricula"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintHorizontal_bias="0.503"-->
+        <!--app:layout_constraintStart_toStartOf="parent" />-->
 
     <EditText
         android:id="@+id/editTextMatricula"
